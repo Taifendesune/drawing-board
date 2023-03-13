@@ -1,13 +1,24 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import DrawingBoard from '@components/DrawingBoard';
+import Workspace from '@/pages/Workspace';
+import { ThemeProvider } from 'styled-components';
+import theme from './theme';
+import { ConfigProvider } from 'antd';
 
 const rootDom = document.getElementById('root');
 if (rootDom) {
   const root = ReactDOM.createRoot(rootDom);
   root.render(
-    <React.StrictMode>
-      <DrawingBoard />
-    </React.StrictMode>
+    <ThemeProvider theme={theme}>
+      <ConfigProvider
+        theme={{
+          token: {
+            colorPrimary: theme.normal.main,
+          },
+        }}
+      >
+        <Workspace />
+      </ConfigProvider>
+    </ThemeProvider>
   );
 }
