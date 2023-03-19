@@ -1,5 +1,6 @@
 import DrawingSpace from '@/components/DrawingSpace';
 import styled from 'styled-components';
+import AppProvider from './AppProvider';
 
 const WorkspaceContainer = styled.div`
   width: 100vw;
@@ -11,7 +12,9 @@ const WorkspaceContainer = styled.div`
 const Workspace = () => {
   return (
     <WorkspaceContainer>
-      <DrawingSpace />
+      <AppProvider>
+        <DrawingSpace />
+      </AppProvider>
     </WorkspaceContainer>
   );
 };

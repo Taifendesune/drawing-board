@@ -1,12 +1,17 @@
 import Renderer from './renderer/Renderer';
 import Tool from './Tools';
 
+interface DrawingBoardOptions {
+  container: HTMLElement;
+}
+
 class DrawingBoard {
-  // renderer: Renderer;
+  renderer: Renderer;
   tool: Tool;
 
-  constructor() {
+  constructor({ container }: DrawingBoardOptions) {
     this.tool = new Tool();
+    this.renderer = new Renderer({ container });
   }
 }
 

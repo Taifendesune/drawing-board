@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import Workspace from '@/pages/Workspace';
+import Workspace from '@/pages/PlaySpace';
 import { ThemeProvider } from 'styled-components';
 import theme from './theme';
 import { ConfigProvider } from 'antd';

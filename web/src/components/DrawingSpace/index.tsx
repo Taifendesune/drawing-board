@@ -1,22 +1,21 @@
-import Render from '@/app/renderer/Renderer';
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useCallback } from 'react';
 import Toolbar from '@components/Toolbar';
-import Canvas from './Canvas';
+import CanvasContainer from './CanvasContainer';
+import { useApp } from '@/pages/PlaySpace/AppProvider';
 
 const DrawingSpace = () => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const app = useApp();
 
-  // useEffect(() => {
-  //   console.log('rener', canvasRef.current);
-  // }, [canvasRef.current]);
-
-  // useEffect(() => {
-  //   render?.requestRender();
-  // }, [render]);
+  const listenResize = useCallback(
+    (width: number, height: number) => {
+      app?.renderer.resize(width, height);
+    },
+    [app]
+  );
 
   return (
     <>
-      <Canvas />
+      <CanvasContainer onResize={listenResize} />
       <Toolbar />
     </>
   );
