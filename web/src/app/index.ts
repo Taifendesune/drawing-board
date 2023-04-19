@@ -1,5 +1,5 @@
 import Renderer from './renderer/Renderer';
-import Tool from './Tools';
+import Tool from './tools';
 
 interface DrawingBoardOptions {
   container: HTMLElement;

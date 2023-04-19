@@ -6,6 +6,7 @@ import { useApp } from '@/pages/PlaySpace/AppProvider';
 const StyledDiv = styled.div`
   width: 100%;
   height: 100%;
+  overflow: hidden;
 `;
 
 interface ContainerProps {
@@ -22,29 +23,18 @@ const CanvasContainer = ({ onResize }: ContainerProps) => {
     const container = containerRef.current;
     if (!container) return;
 
-    const debounceSetSize = debounce(onResize, RESIZE_DELAY);
+    const handleResize = debounce(() => {
+      onResize(
+        Math.round(container.clientWidth),
+        Math.round(container.clientHeight)
+      );
+    }, RESIZE_DELAY);
 
-    // 考虑浏览器兼容性
-    const observer = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        if (entry.contentBoxSize) {
-          // Firefox implements `contentBoxSize` as a single content rect, rather than an array
-          const { inlineSize, blockSize }: ResizeObserverSize = Array.isArray(
-            entry.contentBoxSize
-          )
-            ? entry.contentBoxSize[0]
-            : entry.contentBoxSize;
-          debounceSetSize(inlineSize, blockSize);
-        } else {
-          const { width, height } = entry.contentRect;
-          debounceSetSize(width, height);
-        }
-      }
-    });
-    observer.observe(container);
+    window.addEventListener('resize', handleResize);
 
     return () => {
-      observer.unobserve(container);
+      // observer.unobserve(container);
+      window.removeEventListener('resize', handleResize);
     };
   }, [containerRef.current]);
 

@@ -8,6 +8,7 @@ const DrawingSpace = () => {
 
   const listenResize = useCallback(
     (width: number, height: number) => {
+      console.log('resize', width, height);
       app?.renderer.resize(width, height);
     },
     [app]
