@@ -1,5 +1,6 @@
 import DragHandler from './events/DragHandler';
-import EventEmitter from './utils/EventEmitter';
+import { Coord, PaperEvent } from './types';
+import EventEmitter, { NativeEventsMap } from './utils/EventEmitter';
 import Point from './utils/Point';
 
 interface RendererOptions {
@@ -32,7 +33,7 @@ class Renderer extends EventEmitter {
       this.canvas.width / 2 - this.width * 5,
       this.canvas.height / 2 - this.height * 5,
     ];
-    this.registerEvents();
+    this.addListeners();
     this.requestRender();
   }
 
@@ -69,7 +70,6 @@ class Renderer extends EventEmitter {
   }
 
   render = () => {
-    console.log('render');
     this.clearContext();
     this.renderBackground();
     this.renderData();
@@ -123,25 +123,55 @@ class Renderer extends EventEmitter {
 
   zoomToPoint() {}
 
-  modifyData = (e: MouseEvent) => {
-    const { x, y } = e;
-    const idxX = Math.floor((x - this.transform[4]) / 10);
-    const idxY = Math.floor((y - this.transform[5]) / 10);
-    if (idxX >= 0 && idxX < this.width && idxY >= 0 && idxY < this.height) {
-      this.data[idxX][idxY] = '#ee0000';
+  modifyData = (x: number, y: number, value: string) => {
+    if (x >= 0 && x < this.width && y >= 0 && y < this.height) {
+      this.data[x][y] = value;
       this.requestRender();
     }
   };
 
-  getPaperPostion(point: Point) {}
+  getPaperCoord(e: PointerEvent): Coord {
+    const { x, y } = e;
+    // TODO 考虑 zoom
+    const xCoord = Math.floor((x - this.transform[4]) / 10);
+    const yCoord = Math.floor((y - this.transform[5]) / 10);
+    return [xCoord, yCoord];
+  }
 
-  registerEvents() {
-    // TODO 直接 emit 出去，不能在这里处理数据
-    this.canvas.addEventListener('mousedown', this.modifyData);
+  private handlePointerDown = (e: PointerEvent) => {
+    this.emit('pointerdown', e);
+    this.emit('paper:pointerdown', { e, coord: this.getPaperCoord(e) });
+  };
+
+  private handlePointerMove = (e: PointerEvent) => {
+    this.emit('pointermove', e);
+    this.emit('paper:pointermove', { e, coord: this.getPaperCoord(e) });
+  };
+
+  private handlePointerUp = (e: PointerEvent) => {
+    this.emit('pointerup', e);
+    this.emit('paper:pointerup', { e, coord: this.getPaperCoord(e) });
+  };
+
+  private addListeners() {
+    this.canvas.addEventListener('pointerdown', this.handlePointerDown);
+    this.canvas.addEventListener('pointermove', this.handlePointerMove);
+    this.canvas.addEventListener('pointerup', this.handlePointerUp);
+
     new DragHandler(this);
   }
 
-  destroy() {}
+  private removeListerners() {
+    this.canvas.removeEventListener('pointerdown', this.handlePointerDown);
+    this.canvas.removeEventListener('pointermove', this.handlePointerMove);
+    this.canvas.removeEventListener('pointerup', this.handlePointerUp);
+
+    new DragHandler(this);
+  }
+
+  destroy() {
+    this.removeListerners();
+  }
 }
 
 export default Renderer;

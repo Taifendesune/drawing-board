@@ -7,17 +7,17 @@ class DragHandler {
 
   constructor(renderer: Renderer) {
     this.renderer = renderer;
-    renderer.canvas.addEventListener('mousedown', this.mouseDownListener);
-    renderer.canvas.addEventListener('mousemove', this.mouseMoveListener);
-    renderer.canvas.addEventListener('mouseup', this.mouseUpListener); // blur
+    renderer.on('pointerdown', this.pointerDownListener);
+    renderer.on('pointermove', this.pointerMoveListener);
+    renderer.on('pointerup', this.pointerUpListener); // blur
   }
 
-  mouseDownListener = (e: MouseEvent) => {
+  pointerDownListener = (e: PointerEvent) => {
     if (e.button !== 1) return;
     this.originPoint = new Point(e.clientX, e.clientY);
   };
 
-  mouseMoveListener = (e: MouseEvent) => {
+  pointerMoveListener = (e: PointerEvent) => {
     if (!this.originPoint) return;
     const point = new Point(e.clientX, e.clientY);
     if (this.originPoint.x !== point.x || this.originPoint.y !== point.y) {
@@ -30,7 +30,7 @@ class DragHandler {
     }
   };
 
-  mouseUpListener = (e: MouseEvent) => {
+  pointerUpListener = (e: PointerEvent) => {
     this.originPoint = null;
   };
 }

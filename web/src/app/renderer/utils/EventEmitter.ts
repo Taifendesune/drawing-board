@@ -1,20 +1,30 @@
-export interface Events {
-  'canvas:mousedown': { e: MouseEvent; x: number; y: number };
+import { Coord, PaperEvent } from '../types';
 
-  testevent: number;
+export interface NativeEventsMap {
+  pointerdown: PointerEvent;
+  pointermove: PointerEvent;
+  pointerup: PointerEvent;
 }
+
+export interface PaperEventsMap {
+  'paper:pointerdown': PaperEvent;
+  'paper:pointermove': PaperEvent;
+  'paper:pointerup': PaperEvent;
+}
+
+export interface Events extends NativeEventsMap, PaperEventsMap {}
 
 class EventEmitter {
   handlers: Map<keyof Events, Function[]> = new Map();
 
-  on(eventName: keyof Events, handler: (e: Events[typeof eventName]) => void) {
+  on<T extends keyof Events>(eventName: T, handler: (e: Events[T]) => void) {
     if (!this.handlers.has(eventName)) {
       this.handlers.set(eventName, []);
     }
     this.handlers.get(eventName)?.push(handler);
   }
 
-  off(eventName: keyof Events, handler: (e: Events[typeof eventName]) => void) {
+  off<T extends keyof Events>(eventName: T, handler: (e: Events[T]) => void) {
     const handlerArray = this.handlers.get(eventName);
     if (!handlerArray) return;
     this.handlers.set(
@@ -23,7 +33,7 @@ class EventEmitter {
     );
   }
 
-  emit(eventName: keyof Events, e: Events[typeof eventName]) {
+  emit<T extends keyof Events>(eventName: T, e: Events[T]) {
     const handlerArray = this.handlers.get(eventName);
     if (!handlerArray) return;
     handlerArray.forEach((handler) => handler(e));

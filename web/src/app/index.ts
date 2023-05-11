@@ -1,5 +1,6 @@
 import Renderer from './renderer/Renderer';
-import Tool from './tools';
+import ToolSet from './tools';
+import Pencil from './tools/Pencil';
 
 interface DrawingBoardOptions {
   container: HTMLElement;
@@ -7,11 +8,11 @@ interface DrawingBoardOptions {
 
 class DrawingBoard {
   renderer: Renderer;
-  tool: Tool;
+  toolSet: ToolSet;
 
   constructor({ container }: DrawingBoardOptions) {
-    this.tool = new Tool();
     this.renderer = new Renderer({ container });
+    this.toolSet = new ToolSet([new Pencil(this.renderer)]);
   }
 }
 

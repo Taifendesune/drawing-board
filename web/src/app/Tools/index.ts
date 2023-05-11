@@ -1,11 +1,26 @@
 import { ToolEnum } from '../enums';
+import Tool from './Tool';
 
-class Tool {
-  type: ToolEnum = ToolEnum.PENCIL;
+class ToolSet {
+  active: string = 'pencil';
+  tools: Map<string, Tool> = new Map();
 
-  set(type: ToolEnum) {
-    this.type = type;
+  constructor(tools: Tool[]) {
+    if (tools.length) {
+      tools.forEach((tool) => {
+        this.tools.set(tool.name, tool);
+      });
+      this.set(tools[0].name);
+    }
+  }
+
+  set(active: string) {
+    if (this.active !== active) {
+      this.tools.get(active)?.setActive(false);
+      this.active = active;
+      this.tools.get(active)?.setActive(true);
+    }
   }
 }
 
-export default Tool;
+export default ToolSet;
