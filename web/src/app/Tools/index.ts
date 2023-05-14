@@ -2,7 +2,7 @@ import { ToolEnum } from '../enums';
 import Tool from './Tool';
 
 class ToolSet {
-  active: string = 'pencil';
+  active?: string;
   tools: Map<string, Tool> = new Map();
 
   constructor(tools: Tool[]) {
